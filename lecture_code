@@ -1,0 +1,69 @@
+* Infocus 2 follow along session 1
+* STATA code
+*
+*
+
+* first we load the data in from a spreadsheet
+
+clear
+import delimited "/Users/keithsigel/Dropbox/Documents/Presentations/follow along/cats_cats_cats_2.csv"
+
+* let's look at the dataset
+
+browse
+
+* we want to take a closer look at our cat_owner variable- we can tabulate this variable
+
+tab cat_owner
+
+* in this variable the value '1' means you own a cat while value '0' means you don't own a cat;
+* we want to know if owning a cat was associated with dying in our study;
+
+tab cat_owner died
+
+* maybe not so helpful?
+* how about if we get the proportions
+
+tab cat_owner died, row
+
+* was it significantly different? 
+
+tab cat_owner died, row chi2
+
+* Fewer cat owners died in our study. 
+* But could this be for other reasons? Could it have been confounded?
+* What was the age distribution for cat owners? And was it different by groups?
+
+histogram patient_age
+histogram patient_age, by(cat_owner)
+
+ttest patient_age, by(cat_owner)
+
+
+* Infocus 2 follow along session 2
+*
+*
+*
+
+* remember - fewer cat owners died in our study;
+* we want to see if it is related to confounders;
+* so let's use a multivariable logistic regression model to see if it is an independent predictor;
+
+* we put our dependent variable first in the model
+
+logistic died cat_owner
+
+* now an adjusted model, adjusting for age;
+* including age, vitamin use, race/ethnicity (rac_reca: 1 = white, 2 = black, 3 = hispanic, 9=other);
+
+logistic died cat_owner patient_age vitamins  i.rac_reca
+
+
+* if we were interested instead in a continuous outcome = happiness stage "hst_stga" ;
+* we use the stata command regress
+
+regress hst_stga cat_owner
+
+* and here multivariable
+
+regress hst_stga cat_owner patient_age
